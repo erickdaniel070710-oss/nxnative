@@ -1,0 +1,37 @@
+
+name: Build IPA
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 360
+
+    steps:
+      - name: Download repository
+        uses: actions/checkout@v4
+
+      - name: Install tools
+        run: |
+          brew install xcodegen zstd spirv-cross glslang
+          brew install --cask dotnet-sdk
+          python3 -m pip install --break-system-packages \
+            lz4 capstone fonttools gdown
+
+      - name: Prepare keys
+        env:
+          PROD_KEYS: ${{ secrets.prodkeys }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/keys"
+          printf '%s' "$PROD_KEYS" > "$RUNNER_TEMP/keys/prod.keys"
+          chmod 600 "$RUNNER_TEMP/keys/prod.keys"
+
+      - name: Check game download
+        run: |
+          echo "Repository and build tools are ready."
+          echo "The game download and IPA build need verification."
