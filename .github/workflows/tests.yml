@@ -8,6 +8,14 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+inputs:
+    game_url:
+      description: 'Game Download URL'
+      required: true
+    game_name:
+      description: 'Game Name'
+      required: true
+      default: 'PokemonScarlet'
 
 permissions:
   contents: read
